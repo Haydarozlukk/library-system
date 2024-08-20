@@ -1,6 +1,6 @@
-package com.example.librarysystem.abstracts;
+package com.example.library_system.abstracts;
 
-import com.example.librarysystem.model.Book;
+import com.example.library_system.model.Book;
 
 import java.util.List;
 import java.util.Optional;

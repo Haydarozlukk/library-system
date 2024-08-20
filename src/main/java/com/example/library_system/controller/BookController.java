@@ -1,7 +1,7 @@
-package com.example.librarysystem.controller;
+package com.example.library_system.controller;
 
-import com.example.librarysystem.abstracts.BookService;
-import com.example.librarysystem.model.Book;
+import com.example.library_system.abstracts.BookService;
+import com.example.library_system.model.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

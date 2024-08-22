@@ -20,6 +20,7 @@ public class BookController {
         return bookService.getAllBooks();
     }
 
+
     @GetMapping("/{id}")
     public ResponseEntity<Book> getBookById(@PathVariable Long id) {
         return bookService.getBookById(id)
@@ -29,6 +30,7 @@ public class BookController {
 
     @PostMapping
     public Book addBook(@RequestBody Book book) {
+        System.out.println("adaddd");
         return bookService.addBook(book);
     }
 

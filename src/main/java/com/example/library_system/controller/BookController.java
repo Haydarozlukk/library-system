@@ -30,7 +30,7 @@ public class BookController {
 
     @PostMapping
     public Book addBook(@RequestBody Book book) {
-        System.out.println("adaddd");
+       // System.out.println("adaddd");
         return bookService.addBook(book);
     }
 

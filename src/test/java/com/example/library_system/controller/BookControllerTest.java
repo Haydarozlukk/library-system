@@ -1,6 +1,6 @@
 package com.example.library_system.controller;
 
-import com.example.library_system.abstracts.BookService;
+import com.example.library_system.service.BookService;
 import com.example.library_system.model.Book;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

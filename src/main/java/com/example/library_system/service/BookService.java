@@ -1,4 +1,4 @@
-package com.example.library_system.abstracts;
+package com.example.library_system.service;
 
 import com.example.library_system.model.Book;
 

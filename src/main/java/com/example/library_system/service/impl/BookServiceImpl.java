@@ -1,8 +1,8 @@
-package com.example.library_system.concretes;
+package com.example.library_system.service.impl;
 
-import com.example.library_system.abstracts.BookService;
 import com.example.library_system.model.Book;
 import com.example.library_system.repository.BookRepository;
+import com.example.library_system.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

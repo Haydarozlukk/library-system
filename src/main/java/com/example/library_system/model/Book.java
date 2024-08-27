@@ -16,5 +16,10 @@ public class Book {
 
     @ManyToOne
     private Author author;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
 }
 

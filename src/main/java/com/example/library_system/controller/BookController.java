@@ -1,7 +1,7 @@
 package com.example.library_system.controller;
 
-import com.example.library_system.service.BookService;
 import com.example.library_system.model.Book;
+import com.example.library_system.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +20,6 @@ public class BookController {
         return bookService.getAllBooks();
     }
 
-
     @GetMapping("/{id}")
     public ResponseEntity<Book> getBookById(@PathVariable Long id) {
         return bookService.getBookById(id)
@@ -29,9 +28,13 @@ public class BookController {
     }
 
     @PostMapping
-    public Book addBook(@RequestBody Book book) {
-       // System.out.println("adaddd");
-        return bookService.addBook(book);
+    public ResponseEntity<Book> addBook(@RequestBody Book book) {
+        if (book.getAuthor() == null || book.getCategory() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Book createdBook = bookService.addBook(book);
+        return ResponseEntity.ok(createdBook);
     }
 
     @PutMapping("/{id}")
@@ -42,6 +45,11 @@ public class BookController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
+        return ResponseEntity.noContent().build();
+    }
+    @DeleteMapping("/all")
+    public ResponseEntity<Void> deleteAllBooks() {
+        bookService.deleteAllBooks();
         return ResponseEntity.noContent().build();
     }
 }

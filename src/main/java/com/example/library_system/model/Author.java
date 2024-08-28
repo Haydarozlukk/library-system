@@ -6,11 +6,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
+
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Data
-public class Author {
+public class Author implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,6 +21,6 @@ public class Author {
     private int age;
     private String memleket;
 
-    @OneToMany(mappedBy = "author")
-    private List<Book> books;
+    //@OneToMany(mappedBy = "author")
+    //private List<Book> books;
 }

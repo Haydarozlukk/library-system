@@ -30,8 +30,7 @@ public class CustomerServiceImpl implements CustomerService {
         Optional<Customer> optionalCustomer = customerRepository.findById(id);
         if (optionalCustomer.isPresent()) {
             Customer customer = optionalCustomer.get();
-            customer.setName(customerDetails.getName());  // Örnek bir güncelleme
-            // Diğer alanlar da güncellenebilir
+            customer.setName(customerDetails.getName());
             return customerRepository.save(customer);
         }
         return null;

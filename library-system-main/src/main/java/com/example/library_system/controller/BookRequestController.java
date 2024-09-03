@@ -14,31 +14,31 @@ public class BookRequestController {
     @Autowired
     private BookRequestService bookRequestService;
 
-    // Müşteri kitap talebi oluşturur
+
     @PostMapping("/request")
     public BookRequest createRequest(@RequestBody BookRequest bookRequest) {
         return bookRequestService.createRequest(bookRequest);
     }
 
-    // Belirli bir müşteriye ait talepleri getirir
+
     @GetMapping("/customer/{customerId}")
     public List<BookRequest> getRequestsByCustomer(@PathVariable Long customerId) {
         return bookRequestService.getRequestsByCustomer(customerId);
     }
 
-    // Tüm bekleyen talepleri getirir (admin için)
+
     @GetMapping("/pending")
     public List<BookRequest> getAllPendingRequests() {
         return bookRequestService.getRequestsByStatus("PENDING");
     }
 
-    // Talebi onaylar (admin için)
+
     @PostMapping("/approve/{requestId}")
     public BookRequest approveRequest(@PathVariable Long requestId) {
         return bookRequestService.updateRequestStatus(requestId, "APPROVED");
     }
 
-    // Talebi reddeder (admin için)
+
     @PostMapping("/reject/{requestId}")
     public BookRequest rejectRequest(@PathVariable Long requestId) {
         return bookRequestService.updateRequestStatus(requestId, "REJECTED");

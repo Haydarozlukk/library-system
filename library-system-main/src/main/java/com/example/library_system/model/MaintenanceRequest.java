@@ -19,7 +19,7 @@ public class MaintenanceRequest {
     private Date requestedDate;
 
     @ManyToOne
-    private Admin maintenanceStaff; // Maintenance staff assumed to be admin for now
+    private Admin maintenanceStaff;
 
     private Date completedDate;
 

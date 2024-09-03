@@ -40,7 +40,7 @@ public class CategoryController {
         Category updatedCategory = categoryService.updateCategory(id, category);
         if (updatedCategory != null) {
             return ResponseEntity.ok(updatedCategory);
-        } else {
+        } else   {
             return ResponseEntity.notFound().build();
         }
     }

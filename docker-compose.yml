@@ -1,7 +1,17 @@
 version: '3.8'
-
 services:
-  postgres:
+  app:
+    build: .
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/library
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1234
+    depends_on:
+      - db
+
+  db:
     image: postgres:13
     environment:
       POSTGRES_DB: library
@@ -9,26 +19,3 @@ services:
       POSTGRES_PASSWORD: 1234
     ports:
       - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - springboot-network
-
-  springboot-app:
-    build: .
-    ports:
-      - "8081:8081"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/library
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 1234
-    depends_on:
-      - postgres
-    networks:
-      - springboot-network
-
-networks:
-  springboot-network:
-
-volumes:
-  postgres_data:

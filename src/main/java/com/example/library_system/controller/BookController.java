@@ -47,6 +47,7 @@ public class BookController {
         bookService.deleteBook(id);
         return ResponseEntity.noContent().build();
     }
+
     @DeleteMapping("/all")
     public ResponseEntity<Void> deleteAllBooks() {
         bookService.deleteAllBooks();

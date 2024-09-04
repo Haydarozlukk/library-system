@@ -2,9 +2,10 @@ package com.example.library_system.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.util.List;
 
 import java.io.Serializable;
-import java.util.List;
+
 
 @Entity
 @Data
@@ -25,6 +26,10 @@ public class Book implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id")
     private Author author;
+
+    @OneToMany(mappedBy = "book")
+    private List<DamagedBook> damagedBooks;
+
 
 }
 

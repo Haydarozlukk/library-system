@@ -22,5 +22,5 @@ public class Author implements Serializable {
     private String memleket;
 
     //@OneToMany(mappedBy = "author")
-    //private List<Book> books;
+    //private  List<Book> books;
 }

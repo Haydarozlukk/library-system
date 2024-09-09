@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
 import axios from 'axios';
 
 function CustomerList() {
@@ -25,6 +26,11 @@ function CustomerList() {
     };
 
     const createCustomer = async () => {
+        if (!newCustomer.name || !newCustomer.email || !newCustomer.password || !newCustomer.address || !newCustomer.phoneNumber) {
+            alert("All fields are required!");
+            return;
+        }
+
         try {
             await axios.post('http://localhost:8081/api/customer/create', newCustomer);
             setNewCustomer({
@@ -35,8 +41,10 @@ function CustomerList() {
                 phoneNumber: ''
             }); // Formu sıfırla
             fetchCustomers();
+            alert("Customer created successfully!");
         } catch (error) {
             console.error("Error creating customer", error);
+            alert("There was an error creating the customer.");
         }
     };
 
@@ -44,114 +52,111 @@ function CustomerList() {
         try {
             await axios.delete(`http://localhost:8081/api/customer/delete/${id}`);
             fetchCustomers();
+            alert("Customer deleted successfully!");
         } catch (error) {
             console.error("Error deleting customer", error);
+            alert("There was an error deleting the customer.");
         }
     };
 
     return (
-        <div className="container mt-5">
-            <h2 className="text-center">Customer List</h2>
+        <div style={{ marginTop: '50px' }}>
+            <Typography variant="h4" align="center" gutterBottom>
+                Customer List
+            </Typography>
 
-            {/* Müşteri Listesi */}
-            <table className="table table-striped table-bordered mt-4">
-                <thead className="thead-dark">
-                <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Address</th>
-                    <th>Phone Number</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                {customers.map((customer) => (
-                    <tr key={customer.id}>
-                        <td>{customer.name}</td>
-                        <td>{customer.email}</td>
-                        <td>{customer.address}</td>
-                        <td>{customer.phoneNumber}</td>
-                        <td>
-                            <button
-                                className="btn btn-danger"
-                                onClick={() => deleteCustomer(customer.id)}>
-                                Delete
-                            </button>
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
+            <TableContainer component={Paper} style={{ marginTop: '20px' }}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Name</TableCell>
+                            <TableCell>Email</TableCell>
+                            <TableCell>Address</TableCell>
+                            <TableCell>Phone Number</TableCell>
+                            <TableCell>Actions</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {customers.map((customer) => (
+                            <TableRow key={customer.id}>
+                                <TableCell>{customer.name}</TableCell>
+                                <TableCell>{customer.email}</TableCell>
+                                <TableCell>{customer.address}</TableCell>
+                                <TableCell>{customer.phoneNumber}</TableCell>
+                                <TableCell>
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        onClick={() => deleteCustomer(customer.id)}
+                                    >
+                                        Delete
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
 
-            {/* Yeni Müşteri Ekleme Formu */}
-            <h3 className="mt-5">Create New Customer</h3>
-            <form className="mt-3">
-                <div className="form-group">
-                    <label htmlFor="name">Name</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="name"
-                        placeholder="Enter name"
-                        value={newCustomer.name}
-                        onChange={(e) => setNewCustomer({ ...newCustomer, name: e.target.value })}
-                    />
-                </div>
+            <Typography variant="h5" style={{ marginTop: '40px' }}>
+                Create New Customer
+            </Typography>
 
-                <div className="form-group">
-                    <label htmlFor="email">Email</label>
-                    <input
-                        type="email"
-                        className="form-control"
-                        id="email"
-                        placeholder="Enter email"
-                        value={newCustomer.email}
-                        onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })}
-                    />
-                </div>
+            <form noValidate autoComplete="off" style={{ marginTop: '20px' }}>
+                <TextField
+                    label="Name"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    value={newCustomer.name}
+                    onChange={(e) => setNewCustomer({ ...newCustomer, name: e.target.value })}
+                />
 
-                <div className="form-group">
-                    <label htmlFor="password">Password</label>
-                    <input
-                        type="password"
-                        className="form-control"
-                        id="password"
-                        placeholder="Enter password"
-                        value={newCustomer.password}
-                        onChange={(e) => setNewCustomer({ ...newCustomer, password: e.target.value })}
-                    />
-                </div>
+                <TextField
+                    label="Email"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    value={newCustomer.email}
+                    onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })}
+                />
 
-                <div className="form-group">
-                    <label htmlFor="address">Address</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="address"
-                        placeholder="Enter address"
-                        value={newCustomer.address}
-                        onChange={(e) => setNewCustomer({ ...newCustomer, address: e.target.value })}
-                    />
-                </div>
+                <TextField
+                    label="Password"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    type="password"
+                    value={newCustomer.password}
+                    onChange={(e) => setNewCustomer({ ...newCustomer, password: e.target.value })}
+                />
 
-                <div className="form-group">
-                    <label htmlFor="phoneNumber">Phone Number</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="phoneNumber"
-                        placeholder="Enter phone number"
-                        value={newCustomer.phoneNumber}
-                        onChange={(e) => setNewCustomer({ ...newCustomer, phoneNumber: e.target.value })}
-                    />
-                </div>
+                <TextField
+                    label="Address"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    value={newCustomer.address}
+                    onChange={(e) => setNewCustomer({ ...newCustomer, address: e.target.value })}
+                />
 
-                <button
-                    type="button"
-                    className="btn btn-primary mt-3"
-                    onClick={createCustomer}>
+                <TextField
+                    label="Phone Number"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    value={newCustomer.phoneNumber}
+                    onChange={(e) => setNewCustomer({ ...newCustomer, phoneNumber: e.target.value })}
+                />
+
+                <Button
+                    variant="contained"
+                    color="primary"
+                    style={{ marginTop: '20px' }}
+                    onClick={createCustomer}
+                >
                     Create Customer
-                </button>
+                </Button>
             </form>
         </div>
     );

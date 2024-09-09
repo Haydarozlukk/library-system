@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
 import axios from 'axios';
 
 function CategoryList() {
@@ -21,73 +22,88 @@ function CategoryList() {
     };
 
     const createCategory = async () => {
+        if (!newCategory.name) {
+            alert("Category name is required!");
+            return;
+        }
+
         try {
             await axios.post('http://localhost:8081/api/categories', newCategory);
             setNewCategory({ name: '' }); // Formu sıfırlar
             fetchCategories();
+            alert("Category created successfully!");
         } catch (error) {
             console.error("Error creating category", error);
+            alert("There was an error creating the category.");
         }
     };
 
     const deleteCategory = async (id) => {
         try {
             await axios.delete(`http://localhost:8081/api/categories/${id}`);
-            fetchCategories();
+            setCategories(categories.filter((category) => category.id !== id));
+            alert("Category deleted successfully!");
         } catch (error) {
             console.error("Error deleting category", error);
+            alert("There was an error deleting the category.");
         }
     };
 
     return (
-        <div className="container mt-5">
-            <h2 className="text-center">Category List</h2>
+        <div style={{ marginTop: '50px' }}>
+            <Typography variant="h4" align="center" gutterBottom>
+                Category List
+            </Typography>
 
-            {/* Kategori Listesi */}
-            <table className="table table-striped table-bordered mt-4">
-                <thead className="thead-dark">
-                <tr>
-                    <th>Category Name</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                {categories.map((category) => (
-                    <tr key={category.id}>
-                        <td>{category.name}</td>
-                        <td>
-                            <button
-                                className="btn btn-danger"
-                                onClick={() => deleteCategory(category.id)}>
-                                Delete
-                            </button>
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
+            <TableContainer component={Paper} style={{ marginTop: '20px' }}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Category Name</TableCell>
+                            <TableCell>Actions</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {categories.map((category) => (
+                            <TableRow key={category.id}>
+                                <TableCell>{category.name}</TableCell>
+                                <TableCell>
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        onClick={() => deleteCategory(category.id)}
+                                    >
+                                        Delete
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
 
-            {/* Yeni Kategori Ekleme Formu */}
-            <h3 className="mt-5">Create New Category</h3>
-            <form className="mt-3">
-                <div className="form-group">
-                    <label htmlFor="categoryName">Category Name</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="categoryName"
-                        placeholder="Enter category name"
-                        value={newCategory.name}
-                        onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
-                    />
-                </div>
+            <Typography variant="h5" style={{ marginTop: '40px' }}>
+                Create New Category
+            </Typography>
 
-                <button
-                    type="button"
-                    className="btn btn-primary mt-3"
-                    onClick={createCategory}>
+            <form noValidate autoComplete="off" style={{ marginTop: '20px' }}>
+                <TextField
+                    label="Category Name"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    value={newCategory.name}
+                    onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
+                />
+
+                <Button
+                    variant="contained"
+                    color="primary"
+                    style={{ marginTop: '20px' }}
+                    onClick={createCategory}
+                >
                     Create Category
-                </button>
+                </Button>
             </form>
         </div>
     );

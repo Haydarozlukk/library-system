@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
 import axios from 'axios';
 
 function AdminList() {
@@ -21,7 +22,6 @@ function AdminList() {
 
     // Yeni bir admin oluşturur
     const createAdmin = async () => {
-        // Basit validasyon: Tüm alanların dolu olup olmadığını kontrol edin
         if (!newAdmin.name || !newAdmin.email || !newAdmin.password || !newAdmin.role) {
             alert("All fields are required!");
             return;
@@ -30,93 +30,91 @@ function AdminList() {
         try {
             const response = await axios.post('http://localhost:8081/api/admin/create', newAdmin);
             console.log("Admin created successfully", response.data);
-            fetchAdmins();  // Admin eklendikten sonra listeyi yeniler
+            fetchAdmins(); // Admin eklendikten sonra listeyi yeniler
             alert("Admin created successfully!");
         } catch (error) {
-            // Hata durumunda loglama ve kullanıcıya mesaj gösterme
             console.error("Error creating admin", error.response ? error.response.data : error.message);
             alert("There was an error creating the admin. Please check the console for more details.");
         }
     };
 
     return (
-        <div className="container mt-5">
-            <h2 className="text-center">Admin List</h2>
+        <div style={{ marginTop: '50px' }}>
+            <Typography variant="h4" align="center" gutterBottom>
+                Admin List
+            </Typography>
 
-            <table className="table table-striped table-bordered mt-4">
-                <thead className="thead-dark">
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                </tr>
-                </thead>
-                <tbody>
-                {admins.map(admin => (
-                    <tr key={admin.id}>
-                        <td>{admin.id}</td>
-                        <td>{admin.name}</td>
-                        <td>{admin.email}</td>
-                        <td>{admin.role}</td>
-                        <td>{admin.active ? 'Active' : 'Inactive'}</td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
+            <TableContainer component={Paper} style={{ marginTop: '20px' }}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>ID</TableCell>
+                            <TableCell>Name</TableCell>
+                            <TableCell>Email</TableCell>
+                            <TableCell>Role</TableCell>
+                            <TableCell>Status</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {admins.map((admin) => (
+                            <TableRow key={admin.id}>
+                                <TableCell>{admin.id}</TableCell>
+                                <TableCell>{admin.name}</TableCell>
+                                <TableCell>{admin.email}</TableCell>
+                                <TableCell>{admin.role}</TableCell>
+                                <TableCell>{admin.active ? 'Active' : 'Inactive'}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
 
-            <h3 className="mt-5">Create Admin</h3>
-            <form className="mt-3">
-                <div className="form-group">
-                    <label htmlFor="name">Name</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="name"
-                        placeholder="Enter name"
-                        value={newAdmin.name}
-                        onChange={(e) => setNewAdmin({ ...newAdmin, name: e.target.value })}
-                    />
-                </div>
+            <Typography variant="h5" style={{ marginTop: '40px' }}>
+                Create Admin
+            </Typography>
 
-                <div className="form-group">
-                    <label htmlFor="email">Email</label>
-                    <input
-                        type="email"
-                        className="form-control"
-                        id="email"
-                        placeholder="Enter email"
-                        value={newAdmin.email}
-                        onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })}
-                    />
-                </div>
+            <form noValidate autoComplete="off" style={{ marginTop: '20px' }}>
+                <TextField
+                    label="Name"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    value={newAdmin.name}
+                    onChange={(e) => setNewAdmin({ ...newAdmin, name: e.target.value })}
+                />
 
-                <div className="form-group">
-                    <label htmlFor="password">Password</label>
-                    <input
-                        type="password"
-                        className="form-control"
-                        id="password"
-                        placeholder="Enter password"
-                        value={newAdmin.password}
-                        onChange={(e) => setNewAdmin({ ...newAdmin, password: e.target.value })}
-                    />
-                </div>
+                <TextField
+                    label="Email"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    type="email"
+                    value={newAdmin.email}
+                    onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })}
+                />
 
-                <div className="form-group">
-                    <label htmlFor="role">Role</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="role"
-                        placeholder="Enter role"
-                        value={newAdmin.role}
-                        onChange={(e) => setNewAdmin({ ...newAdmin, role: e.target.value })}
-                    />
-                </div>
+                <TextField
+                    label="Password"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    type="password"
+                    value={newAdmin.password}
+                    onChange={(e) => setNewAdmin({ ...newAdmin, password: e.target.value })}
+                />
 
-                <button type="button" className="btn btn-primary mt-3" onClick={createAdmin}>Create Admin</button>
+                <TextField
+                    label="Role"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    value={newAdmin.role}
+                    onChange={(e) => setNewAdmin({ ...newAdmin, role: e.target.value })}
+                />
+
+                <Button variant="contained" color="primary" style={{ marginTop: '20px' }} onClick={createAdmin}>
+                    Create Admin
+                </Button>
             </form>
         </div>
     );

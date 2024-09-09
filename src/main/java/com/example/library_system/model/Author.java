@@ -6,9 +6,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.io.Serializable;
 import java.util.List;
+
 
 @Entity
 @Data

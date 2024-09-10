@@ -1,6 +1,7 @@
 package com.example.library_system.controller;
 
 import com.example.library_system.model.Author;
+import com.example.library_system.model.Book;
 import com.example.library_system.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,11 @@ public class AuthorController {
     @GetMapping
     public List<Author> getAllAuthors() {
         return authorService.getAllAuthors();
+    }
+
+    @GetMapping("/{id}/books")
+    public List<Book> getBooksByAuthor(@PathVariable Long id) {
+        return authorService.getBooksByAuthor(id);
     }
 
     @GetMapping("/{id}")

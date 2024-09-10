@@ -1,16 +1,18 @@
-package com.example.library_system.service;
+package com.example.library.service;
 
-import com.example.library_system.model.BookRequest;
+import com.example.library.model.BookRequest;
 
 import java.util.List;
 
 public interface BookRequestService {
 
-    BookRequest createRequest(BookRequest bookRequest);
+    BookRequest createBookRequest(BookRequest bookRequest);
 
-    List<BookRequest> getRequestsByCustomer(Long customerId);
+    List<BookRequest> getAllPendingRequests();
 
-    List<BookRequest> getRequestsByStatus(String status);
+    BookRequest approveRequest(Long requestId);
 
-    BookRequest updateRequestStatus(Long requestId, String status);
+    BookRequest rejectRequest(Long requestId);
+
+    List<BookRequest> getCustomerApprovedBooks(Long customerId);
 }

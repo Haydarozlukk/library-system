@@ -6,6 +6,7 @@ import axios from 'axios';
 function CategoryList() {
     const [categories, setCategories] = useState([]);
     const [newCategory, setNewCategory] = useState({ name: '' });
+    const [selectedCategoryBooks, setSelectedCategoryBooks] = useState([]); // Seçilen kategoriye ait kitaplar
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -22,6 +23,20 @@ function CategoryList() {
         } catch (error) {
             setError("Kategoriler getirilirken bir hata oluştu.");
             console.error("Kategoriler getirilirken hata oluştu", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchBooksByCategory = async (categoryId) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await axios.get(`http://localhost:8081/api/categories/${categoryId}/books`);
+            setSelectedCategoryBooks(response.data);
+        } catch (error) {
+            setError("Kitaplar getirilirken bir hata oluştu.");
+            console.error("Kitaplar getirilirken hata oluştu", error);
         } finally {
             setLoading(false);
         }
@@ -73,8 +88,16 @@ function CategoryList() {
                 <Grid container spacing={3} style={{ marginTop: '20px' }}>
                     {categories.map((category) => (
                         <Grid item xs={12} sm={6} md={6} key={category.id}>
-                            <Paper style={{ padding: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Paper
+                                style={{ padding: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <Typography variant="body1">{category.name}</Typography>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={() => fetchBooksByCategory(category.id)}
+                                >
+                                    Kitapları Göster
+                                </Button>
                                 <Button
                                     variant="contained"
                                     color="secondary"
@@ -87,6 +110,29 @@ function CategoryList() {
                         </Grid>
                     ))}
                 </Grid>
+            )}
+
+            {/* Seçilen Kategoriye Ait Kitaplar */}
+            {selectedCategoryBooks.length > 0 && (
+                <div style={{ marginTop: '30px' }}>
+                    <Typography
+                        variant="h5"
+                        gutterBottom
+                        style={{ fontWeight: 'bold', fontSize: '1.8rem', color: '#3f51b5' }}>
+                        Kategorideki Kitaplar
+                    </Typography>
+                    <Grid container spacing={3}>
+                        {selectedCategoryBooks.map((book) => (
+                            <Grid item xs={12} sm={6} md={4} key={book.id}>
+                                <Paper style={{ padding: '10px' }}>
+                                    <Typography variant="h6">{book.title}</Typography>
+                                    <Typography>{book.isbn}</Typography>
+                                    <Typography>{book.publicationYear}</Typography>
+                                </Paper>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </div>
             )}
 
             <Typography

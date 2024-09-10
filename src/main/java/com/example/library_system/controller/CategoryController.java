@@ -1,5 +1,6 @@
 package com.example.library_system.controller;
 
+import com.example.library_system.model.Book;
 import com.example.library_system.model.Category;
 import com.example.library_system.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 @CrossOrigin(origins = "http://localhost:5174")
 @RestController
 @RequestMapping("/api/categories")
@@ -20,7 +22,7 @@ public class CategoryController {
         return categoryService.getAllCategories();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}/books")
     public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
         Category category = categoryService.getCategoryById(id);
         if (category != null) {
@@ -40,7 +42,7 @@ public class CategoryController {
         Category updatedCategory = categoryService.updateCategory(id, category);
         if (updatedCategory != null) {
             return ResponseEntity.ok(updatedCategory);
-        } else   {
+        } else {
             return ResponseEntity.notFound().build();
         }
     }

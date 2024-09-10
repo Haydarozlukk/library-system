@@ -1,12 +1,12 @@
-package com.example.library_system.service.impl;
+package com.example.library.service.impl;
 
-import com.example.library_system.model.BookRequest;
-import com.example.library_system.repository.BookRequestRepository;
-import com.example.library_system.service.BookRequestService;
+import com.example.library.model.BookRequest;
+import com.example.library.repository.BookRequestRepository;
+import com.example.library.service.BookRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -16,27 +16,37 @@ public class BookRequestServiceImpl implements BookRequestService {
     private BookRequestRepository bookRequestRepository;
 
     @Override
-    public BookRequest createRequest(BookRequest bookRequest) {
-        bookRequest.setRequestDate(new Date());
-        bookRequest.setStatus("PENDING");
+    public BookRequest createBookRequest(BookRequest bookRequest) {
+        bookRequest.setRequestDate(LocalDateTime.now());
+        bookRequest.setStatus("Pending");
         return bookRequestRepository.save(bookRequest);
     }
 
     @Override
-    public List<BookRequest> getRequestsByCustomer(Long customerId) {
-        return bookRequestRepository.findByCustomerId(customerId);
+    public List<BookRequest> getAllPendingRequests() {
+        return bookRequestRepository.findByStatus("Pending");
     }
 
     @Override
-    public List<BookRequest> getRequestsByStatus(String status) {
-        return bookRequestRepository.findByStatus(status);
-    }
-
-    @Override
-    public BookRequest updateRequestStatus(Long requestId, String status) {
-        BookRequest request = bookRequestRepository.findById(requestId)
-                .orElseThrow(() -> new IllegalArgumentException("Request not found"));
-        request.setStatus(status);
+    public BookRequest approveRequest(Long requestId) {
+        BookRequest request = bookRequestRepository.findById(requestId).orElseThrow(() -> new RuntimeException("Request not found"));
+        request.setStatus("Approved");
+        request.setApprovalDate(LocalDateTime.now());
         return bookRequestRepository.save(request);
+    }
+
+    @Override
+    public BookRequest rejectRequest(Long requestId) {
+        BookRequest request = bookRequestRepository.findById(requestId).orElseThrow(() -> new RuntimeException("Request not found"));
+        request.setStatus("Rejected");
+        return bookRequestRepository.save(request);
+    }
+
+    @Override
+    public List<BookRequest> getCustomerApprovedBooks(Long customerId) {
+        return bookRequestRepository.findByCustomerId(customerId)
+                .stream()
+                .filter(request -> "Approved".equals(request.getStatus()))
+                .toList();
     }
 }

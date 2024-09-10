@@ -19,18 +19,19 @@ public class Book implements Serializable {
     private String title;
     private String isbn;
     private int publicationYear;
+    private String imageUrl;
 
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "author_id")
     private Author author;
 
-    @OneToMany(mappedBy = "book")
-    private List<DamagedBook> damagedBooks;
+
+
 
 
 }

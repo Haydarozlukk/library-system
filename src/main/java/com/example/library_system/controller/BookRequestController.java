@@ -1,46 +1,42 @@
-package com.example.library_system.controller;
+package com.example.library.controller;
 
-import com.example.library_system.model.BookRequest;
-import com.example.library_system.service.BookRequestService;
+import com.example.library.model.BookRequest;
+import com.example.library.service.BookRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:5174")
 @RestController
-@RequestMapping("/api/bookrequest")
+@RequestMapping("/api/book-requests")
 public class BookRequestController {
 
     @Autowired
     private BookRequestService bookRequestService;
 
-
     @PostMapping("/request")
     public BookRequest createRequest(@RequestBody BookRequest bookRequest) {
-        return bookRequestService.createRequest(bookRequest);
+        return bookRequestService.createBookRequest(bookRequest);
     }
-
-
-    @GetMapping("/customer/{customerId}")
-    public List<BookRequest> getRequestsByCustomer(@PathVariable Long customerId) {
-        return bookRequestService.getRequestsByCustomer(customerId);
-    }
-
 
     @GetMapping("/pending")
     public List<BookRequest> getAllPendingRequests() {
-        return bookRequestService.getRequestsByStatus("PENDING");
+        return bookRequestService.getAllPendingRequests();
     }
 
-
-    @PostMapping("/approve/{requestId}")
-    public BookRequest approveRequest(@PathVariable Long requestId) {
-        return bookRequestService.updateRequestStatus(requestId, "APPROVED");
+    @PostMapping("/approve/{id}")
+    public BookRequest approveRequest(@PathVariable Long id) {
+        return bookRequestService.approveRequest(id);
     }
 
+    @PostMapping("/reject/{id}")
+    public BookRequest rejectRequest(@PathVariable Long id) {
+        return bookRequestService.rejectRequest(id);
+    }
 
-    @PostMapping("/reject/{requestId}")
-    public BookRequest rejectRequest(@PathVariable Long requestId) {
-        return bookRequestService.updateRequestStatus(requestId, "REJECTED");
+    @GetMapping("/customer/{customerId}/approved-books")
+    public List<BookRequest> getCustomerApprovedBooks(@PathVariable Long customerId) {
+        return bookRequestService.getCustomerApprovedBooks(customerId);
     }
 }

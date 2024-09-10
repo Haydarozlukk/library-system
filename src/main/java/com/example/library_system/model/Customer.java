@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
+
 import java.io.Serializable;
 
 @Entity
@@ -21,5 +22,5 @@ public class Customer implements Serializable {
     private String address;
     private String phoneNumber;
 
-    
+
 }

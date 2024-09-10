@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, TextField, Button, Card, CardContent, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress } from '@mui/material';
+import { Grid, TextField, Button, Card, CardContent, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Avatar } from '@mui/material';
 import axios from 'axios';
 
 function AuthorList() {
     const [authors, setAuthors] = useState([]);
-    const [newAuthor, setNewAuthor] = useState({ name: '', age: '', memleket: '' });
+    const [newAuthor, setNewAuthor] = useState({ name: '', age: '', memleket: '', imageUrl: '' });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [selectedAuthorId, setSelectedAuthorId] = useState(null);
+    const [authorBooks, setAuthorBooks] = useState([]); // Yazarın kitaplarını tutacak state
 
     useEffect(() => {
         fetchAuthors();
@@ -27,7 +29,7 @@ function AuthorList() {
     };
 
     const createAuthor = async () => {
-        if (!newAuthor.name || !newAuthor.age || !newAuthor.memleket) {
+        if (!newAuthor.name || !newAuthor.age || !newAuthor.memleket || !newAuthor.imageUrl) {
             alert("Tüm alanlar doldurulmalıdır!");
             return;
         }
@@ -35,11 +37,22 @@ function AuthorList() {
         try {
             await axios.post('http://localhost:8081/api/authors', newAuthor);
             fetchAuthors();
-            setNewAuthor({ name: '', age: '', memleket: '' });
+            setNewAuthor({ name: '', age: '', memleket: '', imageUrl: '' });
             alert("Yazar başarıyla eklendi!");
         } catch (error) {
             console.error("Yazar oluşturulurken hata oluştu", error);
             alert("Yazar oluşturulurken bir hata oluştu.");
+        }
+    };
+
+    const fetchBooksByAuthor = async (authorId) => {
+        setSelectedAuthorId(authorId);
+        try {
+            const response = await axios.get(`http://localhost:8081/api/authors/${authorId}/books`);
+            setAuthorBooks(response.data);
+        } catch (error) {
+            console.error("Yazarın kitapları getirilirken hata oluştu", error);
+            setAuthorBooks([]);
         }
     };
 
@@ -72,17 +85,31 @@ function AuthorList() {
                                     <Table>
                                         <TableHead>
                                             <TableRow>
+                                                <TableCell><strong>Görsel</strong></TableCell>
                                                 <TableCell><strong>İsim</strong></TableCell>
                                                 <TableCell><strong>Yaş</strong></TableCell>
                                                 <TableCell><strong>Memleket</strong></TableCell>
+                                                <TableCell><strong>Kitaplar</strong></TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
                                             {authors.map((author) => (
                                                 <TableRow key={author.id}>
+                                                    <TableCell>
+                                                        <Avatar alt={author.name} src={author.imageUrl} />
+                                                    </TableCell>
                                                     <TableCell>{author.name}</TableCell>
                                                     <TableCell>{author.age}</TableCell>
                                                     <TableCell>{author.memleket}</TableCell>
+                                                    <TableCell>
+                                                        <Button
+                                                            variant="outlined"
+                                                            color="primary"
+                                                            onClick={() => fetchBooksByAuthor(author.id)}
+                                                        >
+                                                            Kitapları Göster
+                                                        </Button>
+                                                    </TableCell>
                                                 </TableRow>
                                             ))}
                                         </TableBody>
@@ -132,6 +159,17 @@ function AuthorList() {
                                     onChange={(e) => setNewAuthor({ ...newAuthor, memleket: e.target.value })}
                                 />
 
+                                {/* Görsel URL */}
+                                <TextField
+                                    label="Görsel URL"
+                                    variant="outlined"
+                                    fullWidth
+                                    margin="normal"
+                                    required
+                                    value={newAuthor.imageUrl}
+                                    onChange={(e) => setNewAuthor({ ...newAuthor, imageUrl: e.target.value })}
+                                />
+
                                 <Button
                                     variant="contained"
                                     color="primary"
@@ -146,6 +184,50 @@ function AuthorList() {
                     </Card>
                 </Grid>
             </Grid>
+
+            {/* Yazarın Kitap Listesi */}
+            {selectedAuthorId && (
+                <Grid container spacing={3} justifyContent="center" style={{ marginTop: '30px' }}>
+                    <Grid item xs={12} md={8}>
+                        <Card>
+                            <CardContent>
+                                <Typography variant="h5" component="div" gutterBottom style={{ fontWeight: 'bold' }}>
+                                    Yazarın Kitapları
+                                </Typography>
+
+                                {authorBooks.length === 0 ? (
+                                    <Typography>Bu yazarın henüz kitabı yok.</Typography>
+                                ) : (
+                                    <TableContainer component={Paper}>
+                                        <Table>
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell><strong>Kapak</strong></TableCell>
+                                                    <TableCell><strong>Başlık</strong></TableCell>
+                                                    <TableCell><strong>ISBN</strong></TableCell>
+                                                    <TableCell><strong>Yayın Yılı</strong></TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {authorBooks.map((book) => (
+                                                    <TableRow key={book.id}>
+                                                        <TableCell>
+                                                            <Avatar alt={book.title} src={book.imageUrl} />
+                                                        </TableCell>
+                                                        <TableCell>{book.title}</TableCell>
+                                                        <TableCell>{book.isbn}</TableCell>
+                                                        <TableCell>{book.publicationYear}</TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                </Grid>
+            )}
         </div>
     );
 }

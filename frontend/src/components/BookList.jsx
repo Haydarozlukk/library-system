@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, CircularProgress, Grid } from '@mui/material';
-import { Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
+import { Card, CardContent, CardMedia, Typography, Grid, TextField, Button, CircularProgress } from '@mui/material';
+import { Add as AddIcon } from '@mui/icons-material';
 import axios from 'axios';
 
 function BookList() {
@@ -10,7 +10,8 @@ function BookList() {
         isbn: '',
         publicationYear: '',
         author: '',
-        category: ''
+        category: '',
+        imageUrl: '' // Yeni resim URL alanı
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -23,7 +24,7 @@ function BookList() {
         setLoading(true);
         setError(null);
         try {
-            const response = await axios.get('http://localhost:8081/api/books');
+            const response = await axios.get('http://localhost:8081/api/books/all');
             setBooks(response.data);
         } catch (error) {
             setError("Kitaplar getirilirken bir hata oluştu.");
@@ -34,7 +35,7 @@ function BookList() {
     };
 
     const createBook = async () => {
-        if (!newBook.title || !newBook.isbn || !newBook.publicationYear || !newBook.author || !newBook.category) {
+        if (!newBook.title || !newBook.isbn || !newBook.publicationYear || !newBook.author || !newBook.category || !newBook.imageUrl) {
             alert("Tüm alanlar doldurulmalıdır!");
             return;
         }
@@ -42,21 +43,11 @@ function BookList() {
         try {
             await axios.post('http://localhost:8081/api/books', newBook);
             fetchBooks();
-            setNewBook({ title: '', isbn: '', publicationYear: '', author: '', category: '' });
+            setNewBook({ title: '', isbn: '', publicationYear: '', author: '', category: '', imageUrl: '' });
             alert("Kitap başarıyla oluşturuldu!");
         } catch (error) {
             console.error("Kitap oluşturulurken hata oluştu", error);
             alert("Kitap oluşturulurken bir hata oluştu.");
-        }
-    };
-
-    const deleteBook = async (id) => {
-        try {
-            await axios.delete(`http://localhost:8081/api/books/${id}`);
-            fetchBooks();
-        } catch (error) {
-            console.error("Kitap silinirken hata oluştu", error);
-            alert("Kitap silinirken bir hata oluştu.");
         }
     };
 
@@ -75,37 +66,31 @@ function BookList() {
             ) : error ? (
                 <Typography color="error" align="center">{error}</Typography>
             ) : (
-                <TableContainer component={Paper} style={{ marginTop: '20px' }}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell><strong>Başlık</strong></TableCell>
-                                <TableCell><strong>ISBN</strong></TableCell>
-                                <TableCell><strong>Yayın Yılı</strong></TableCell>
-                                <TableCell><strong>İşlemler</strong></TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {books.map((book) => (
-                                <TableRow key={book.id}>
-                                    <TableCell>{book.title}</TableCell>
-                                    <TableCell>{book.isbn}</TableCell>
-                                    <TableCell>{book.publicationYear}</TableCell>
-                                    <TableCell>
-                                        <Button
-                                            variant="contained"
-                                            color="secondary"
-                                            startIcon={<DeleteIcon />}
-                                            onClick={() => deleteBook(book.id)}
-                                        >
-                                            Sil
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                <Grid container spacing={3}>
+                    {books.map((book) => (
+                        <Grid item xs={12} sm={6} md={4} key={book.id}>
+                            <Card style={{ maxWidth: 345 }}>
+                                <CardMedia
+                                    component="img"
+                                    height="200"
+                                    image={book.imageUrl} // Resim URL'sini kullanıyoruz
+                                    alt={book.title}
+                                />
+                                <CardContent>
+                                    <Typography gutterBottom variant="h5" component="div">
+                                        {book.title}
+                                    </Typography>
+                                    <Typography variant="body2" color="textSecondary">
+                                        ISBN: {book.isbn}
+                                    </Typography>
+                                    <Typography variant="body2" color="textSecondary">
+                                        Yayın Yılı: {book.publicationYear}
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    ))}
+                </Grid>
             )}
 
             <Typography
@@ -164,6 +149,16 @@ function BookList() {
                         margin="normal"
                         value={newBook.category}
                         onChange={(e) => setNewBook({ ...newBook, category: e.target.value })}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        label="Resim URL"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        value={newBook.imageUrl}
+                        onChange={(e) => setNewBook({ ...newBook, imageUrl: e.target.value })} // Resim URL girişi
                     />
                 </Grid>
             </Grid>

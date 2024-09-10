@@ -1,7 +1,9 @@
 package com.example.library_system.service.impl;
 
 import com.example.library_system.model.Author;
+import com.example.library_system.model.Book;
 import com.example.library_system.repository.AuthorRepository;
+import com.example.library_system.repository.BookRepository;
 import com.example.library_system.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,9 +17,18 @@ public class AuthorServiceImpl implements AuthorService {
     @Autowired
     private AuthorRepository authorRepository;
 
+    @Autowired
+    private BookRepository bookRepository;
+
+
     @Override
     public List<Author> getAllAuthors() {
         return authorRepository.findAll();
+    }
+
+    @Override
+    public List<Book> getBooksByAuthor(Long authorId) {
+        return bookRepository.findByAuthorId(authorId);
     }
 
     @Override

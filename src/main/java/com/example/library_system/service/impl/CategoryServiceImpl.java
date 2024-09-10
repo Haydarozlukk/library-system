@@ -1,6 +1,8 @@
 package com.example.library_system.service.impl;
 
+import com.example.library_system.model.Book;
 import com.example.library_system.model.Category;
+import com.example.library_system.repository.BookRepository;
 import com.example.library_system.repository.CategoryRepository;
 import com.example.library_system.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +17,17 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private BookRepository bookRepository;
+
     @Override
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
+    }
+
+    @Override
+    public List<Book> getBooksByCategory(Long categoryId) {
+        return bookRepository.findByCategoryId(categoryId);
     }
 
     @Override

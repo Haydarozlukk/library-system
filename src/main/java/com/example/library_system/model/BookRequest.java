@@ -1,15 +1,18 @@
-package com.example.library_system.model;
+package com.example.library.model;
 
-import lombok.Data;
+import com.example.library_system.model.Book;
+import com.example.library_system.model.Customer;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.Setter;
+
 import jakarta.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor // Parametresiz constructor oluşturur
 public class BookRequest {
 
     @Id
@@ -22,7 +25,11 @@ public class BookRequest {
     @ManyToOne
     private Book book;
 
-    private Date requestDate;
+    private String status; // Pending, Approved, Rejected
 
-    private String status; // Örneğin, PENDING, APPROVED, REJECTED
+    private LocalDateTime requestDate;
+
+    private LocalDateTime approvalDate;
+
+
 }

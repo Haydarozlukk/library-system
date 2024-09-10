@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { TextField, Button, MenuItem, Select, InputLabel, FormControl, Typography, Box } from '@mui/material';
+import { TextField, Button, MenuItem, Select, InputLabel, FormControl, Typography, Box, Alert } from '@mui/material';
+import { Add as AddIcon } from '@mui/icons-material';
 import axios from 'axios';
 
 function UserCreateForm() {
@@ -12,7 +13,17 @@ function UserCreateForm() {
         role: 'admin' // Varsayılan olarak admin seçili
     });
 
+    const [error, setError] = useState(null);  // Hata durumu
+    const [success, setSuccess] = useState(null);  // Başarı durumu
+
     const createUser = async () => {
+        // Form validasyonu
+        if (!newUser.name || !newUser.email || !newUser.password || (newUser.role === 'customer' && (!newUser.address || !newUser.phoneNumber))) {
+            setError("Tüm alanlar doldurulmalıdır!");
+            setSuccess(null);  // Başarı mesajını sıfırla
+            return;
+        }
+
         try {
             // Kullanıcı rolüne göre farklı API uç noktalarına POST isteği gönderiyoruz
             const apiUrl = newUser.role === 'admin'
@@ -20,7 +31,8 @@ function UserCreateForm() {
                 : 'http://localhost:8081/api/customer/create';
 
             await axios.post(apiUrl, newUser);
-            alert(`${newUser.role.charAt(0).toUpperCase() + newUser.role.slice(1)} created successfully!`);
+            setSuccess(`${newUser.role.charAt(0).toUpperCase() + newUser.role.slice(1)} başarıyla oluşturuldu!`);
+            setError(null);  // Hata mesajını sıfırla
 
             // Formu sıfırla
             setNewUser({
@@ -33,32 +45,40 @@ function UserCreateForm() {
             });
         } catch (error) {
             console.error("Error creating user", error);
-            alert("There was an error creating the user.");
+            setError("Kullanıcı oluşturulurken bir hata oluştu.");
+            setSuccess(null);  // Başarı mesajını sıfırla
         }
     };
 
     return (
         <Box sx={{ maxWidth: 600, mx: 'auto', mt: 5 }}>
             <Typography variant="h4" align="center" gutterBottom>
-                Create User (Admin or Customer)
+                Kullanıcı Oluştur (Admin veya Müşteri)
             </Typography>
+
+            {/* Hata Mesajı */}
+            {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+
+            {/* Başarı Mesajı */}
+            {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
+
             <form noValidate autoComplete="off">
                 <FormControl fullWidth margin="normal">
-                    <InputLabel id="role-label">Role</InputLabel>
+                    <InputLabel id="role-label">Rol</InputLabel>
                     <Select
                         labelId="role-label"
                         id="role"
                         value={newUser.role}
-                        label="Role"
+                        label="Rol"
                         onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
                     >
                         <MenuItem value="admin">Admin</MenuItem>
-                        <MenuItem value="customer">Customer</MenuItem>
+                        <MenuItem value="customer">Müşteri</MenuItem>
                     </Select>
                 </FormControl>
 
                 <TextField
-                    label="Name"
+                    label="İsim"
                     variant="outlined"
                     fullWidth
                     margin="normal"
@@ -77,7 +97,7 @@ function UserCreateForm() {
                 />
 
                 <TextField
-                    label="Password"
+                    label="Şifre"
                     variant="outlined"
                     fullWidth
                     margin="normal"
@@ -89,7 +109,7 @@ function UserCreateForm() {
                 {newUser.role === 'customer' && (
                     <>
                         <TextField
-                            label="Address"
+                            label="Adres"
                             variant="outlined"
                             fullWidth
                             margin="normal"
@@ -98,7 +118,7 @@ function UserCreateForm() {
                         />
 
                         <TextField
-                            label="Phone Number"
+                            label="Telefon Numarası"
                             variant="outlined"
                             fullWidth
                             margin="normal"
@@ -112,10 +132,11 @@ function UserCreateForm() {
                     variant="contained"
                     color="primary"
                     fullWidth
+                    startIcon={<AddIcon />}  // Butona ikon eklendi
                     sx={{ mt: 3 }}
                     onClick={createUser}
                 >
-                    Create {newUser.role.charAt(0).toUpperCase() + newUser.role.slice(1)}
+                    {newUser.role.charAt(0).toUpperCase() + newUser.role.slice(1)} Oluştur
                 </Button>
             </form>
         </Box>

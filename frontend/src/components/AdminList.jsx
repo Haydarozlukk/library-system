@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
+import { TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Grid } from '@mui/material';
 import axios from 'axios';
 
 function AdminList() {
@@ -10,49 +10,47 @@ function AdminList() {
         fetchAdmins();
     }, []);
 
-    // Admin listesini sunucudan getirir
     const fetchAdmins = async () => {
         try {
             const response = await axios.get('http://localhost:8081/api/admin/all');
             setAdmins(response.data);
         } catch (error) {
-            console.error("Error fetching admins", error);
+            console.error("Yöneticiler getirilirken hata oluştu.", error);
         }
     };
 
-    // Yeni bir admin oluşturur
     const createAdmin = async () => {
         if (!newAdmin.name || !newAdmin.email || !newAdmin.password || !newAdmin.role) {
-            alert("All fields are required!");
+            alert("Tüm alanların doldurulması zorunludur!");
             return;
         }
 
         try {
             const response = await axios.post('http://localhost:8081/api/admin/create', newAdmin);
-            console.log("Admin created successfully", response.data);
             fetchAdmins(); // Admin eklendikten sonra listeyi yeniler
-            alert("Admin created successfully!");
+            alert("Yönetici başarıyla oluşturuldu!");
+            setNewAdmin({ name: '', email: '', password: '', role: '', active: true }); // Formu sıfırla
         } catch (error) {
-            console.error("Error creating admin", error.response ? error.response.data : error.message);
-            alert("There was an error creating the admin. Please check the console for more details.");
+            console.error("Yönetici oluşturulurken hata oluştu.", error.response ? error.response.data : error.message);
+            alert("Yönetici oluşturulurken bir hata meydana geldi. Detaylar için konsolu kontrol edin.");
         }
     };
 
     return (
-        <div style={{ marginTop: '50px' }}>
-            <Typography variant="h4" align="center" gutterBottom>
-                Admin List
+        <div style={{ marginTop: '50px', padding: '20px' }}>
+            <Typography variant="h4" align="center" gutterBottom style={{ fontWeight: 'bold', fontSize: '2rem' }}>
+                Yönetici Listesi
             </Typography>
 
-            <TableContainer component={Paper} style={{ marginTop: '20px' }}>
+            <TableContainer component={Paper} style={{ marginTop: '20px', padding: '20px' }}>
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>ID</TableCell>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Email</TableCell>
-                            <TableCell>Role</TableCell>
-                            <TableCell>Status</TableCell>
+                            <TableCell><strong>ID</strong></TableCell>
+                            <TableCell><strong>İsim</strong></TableCell>
+                            <TableCell><strong>Email</strong></TableCell>
+                            <TableCell><strong>Rol</strong></TableCell>
+                            <TableCell><strong>Durum</strong></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -61,61 +59,71 @@ function AdminList() {
                                 <TableCell>{admin.id}</TableCell>
                                 <TableCell>{admin.name}</TableCell>
                                 <TableCell>{admin.email}</TableCell>
-                                <TableCell>{admin.role}</TableCell>
-                                <TableCell>{admin.active ? 'Active' : 'Inactive'}</TableCell>
+                                <TableCell>{admin.role.toUpperCase()}</TableCell>
+                                <TableCell>{admin.active ? 'Aktif' : 'Pasif'}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer>
 
-            <Typography variant="h5" style={{ marginTop: '40px' }}>
-                Create Admin
+            <Typography variant="h5" style={{ marginTop: '40px', fontWeight: 'bold', fontSize: '1.5rem' }}>
+                Yeni Yönetici Oluştur
             </Typography>
 
-            <form noValidate autoComplete="off" style={{ marginTop: '20px' }}>
-                <TextField
-                    label="Name"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    value={newAdmin.name}
-                    onChange={(e) => setNewAdmin({ ...newAdmin, name: e.target.value })}
-                />
+            <Grid container spacing={3} style={{ marginTop: '20px' }}>
+                <Grid item xs={12} md={6}>
+                    <TextField
+                        label="İsim"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        value={newAdmin.name}
+                        onChange={(e) => setNewAdmin({ ...newAdmin, name: e.target.value })}
+                    />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <TextField
+                        label="Email"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        type="email"
+                        value={newAdmin.email}
+                        onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })}
+                    />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <TextField
+                        label="Şifre"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        type="password"
+                        value={newAdmin.password}
+                        onChange={(e) => setNewAdmin({ ...newAdmin, password: e.target.value })}
+                    />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <TextField
+                        label="Rol"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        value={newAdmin.role}
+                        onChange={(e) => setNewAdmin({ ...newAdmin, role: e.target.value })}
+                    />
+                </Grid>
+            </Grid>
 
-                <TextField
-                    label="Email"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    type="email"
-                    value={newAdmin.email}
-                    onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })}
-                />
-
-                <TextField
-                    label="Password"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    type="password"
-                    value={newAdmin.password}
-                    onChange={(e) => setNewAdmin({ ...newAdmin, password: e.target.value })}
-                />
-
-                <TextField
-                    label="Role"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    value={newAdmin.role}
-                    onChange={(e) => setNewAdmin({ ...newAdmin, role: e.target.value })}
-                />
-
-                <Button variant="contained" color="primary" style={{ marginTop: '20px' }} onClick={createAdmin}>
-                    Create Admin
-                </Button>
-            </form>
+            <Button
+                variant="contained"
+                color="primary"
+                style={{ marginTop: '20px', padding: '10px 20px', fontSize: '1rem', fontWeight: 'bold' }}
+                onClick={createAdmin}
+            >
+                Yönetici Oluştur
+            </Button>
         </div>
     );
 }

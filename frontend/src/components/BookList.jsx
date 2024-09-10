@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
+import { TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, CircularProgress, Grid } from '@mui/material';
+import { Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
 import axios from 'axios';
 
 function BookList() {
@@ -11,23 +12,30 @@ function BookList() {
         author: '',
         category: ''
     });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         fetchBooks();
     }, []);
 
     const fetchBooks = async () => {
+        setLoading(true);
+        setError(null);
         try {
             const response = await axios.get('http://localhost:8081/api/books');
             setBooks(response.data);
         } catch (error) {
-            console.error("Error fetching books", error);
+            setError("Kitaplar getirilirken bir hata oluştu.");
+            console.error("Kitaplar getirilirken hata oluştu", error);
+        } finally {
+            setLoading(false);
         }
     };
 
     const createBook = async () => {
         if (!newBook.title || !newBook.isbn || !newBook.publicationYear || !newBook.author || !newBook.category) {
-            alert("All fields are required!");
+            alert("Tüm alanlar doldurulmalıdır!");
             return;
         }
 
@@ -35,10 +43,10 @@ function BookList() {
             await axios.post('http://localhost:8081/api/books', newBook);
             fetchBooks();
             setNewBook({ title: '', isbn: '', publicationYear: '', author: '', category: '' });
-            alert("Book created successfully!");
+            alert("Kitap başarıyla oluşturuldu!");
         } catch (error) {
-            console.error("Error creating book", error);
-            alert("There was an error creating the book.");
+            console.error("Kitap oluşturulurken hata oluştu", error);
+            alert("Kitap oluşturulurken bir hata oluştu.");
         }
     };
 
@@ -47,108 +55,128 @@ function BookList() {
             await axios.delete(`http://localhost:8081/api/books/${id}`);
             fetchBooks();
         } catch (error) {
-            console.error("Error deleting book", error);
-            alert("There was an error deleting the book.");
+            console.error("Kitap silinirken hata oluştu", error);
+            alert("Kitap silinirken bir hata oluştu.");
         }
     };
 
     return (
-        <div style={{ marginTop: '50px' }}>
-            <Typography variant="h4" align="center" gutterBottom>
-                Book List
+        <div style={{ marginTop: '50px', padding: '20px' }}>
+            <Typography
+                variant="h4"
+                align="center"
+                gutterBottom
+                style={{ fontWeight: 'bold', fontSize: '2.2rem', color: '#3f51b5' }}>
+                Kitap Listesi
             </Typography>
 
-            <TableContainer component={Paper} style={{ marginTop: '20px' }}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Title</TableCell>
-                            <TableCell>ISBN</TableCell>
-                            <TableCell>Publication Year</TableCell>
-                            <TableCell>Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {books.map((book) => (
-                            <TableRow key={book.id}>
-                                <TableCell>{book.title}</TableCell>
-                                <TableCell>{book.isbn}</TableCell>
-                                <TableCell>{book.publicationYear}</TableCell>
-                                <TableCell>
-                                    <Button
-                                        variant="contained"
-                                        color="secondary"
-                                        onClick={() => deleteBook(book.id)}
-                                    >
-                                        Delete
-                                    </Button>
-                                </TableCell>
+            {loading ? (
+                <CircularProgress style={{ display: 'block', margin: '20px auto' }} />
+            ) : error ? (
+                <Typography color="error" align="center">{error}</Typography>
+            ) : (
+                <TableContainer component={Paper} style={{ marginTop: '20px' }}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell><strong>Başlık</strong></TableCell>
+                                <TableCell><strong>ISBN</strong></TableCell>
+                                <TableCell><strong>Yayın Yılı</strong></TableCell>
+                                <TableCell><strong>İşlemler</strong></TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                        </TableHead>
+                        <TableBody>
+                            {books.map((book) => (
+                                <TableRow key={book.id}>
+                                    <TableCell>{book.title}</TableCell>
+                                    <TableCell>{book.isbn}</TableCell>
+                                    <TableCell>{book.publicationYear}</TableCell>
+                                    <TableCell>
+                                        <Button
+                                            variant="contained"
+                                            color="secondary"
+                                            startIcon={<DeleteIcon />}
+                                            onClick={() => deleteBook(book.id)}
+                                        >
+                                            Sil
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            )}
 
-            <Typography variant="h5" style={{ marginTop: '40px' }}>
-                Create New Book
+            <Typography
+                variant="h5"
+                style={{ marginTop: '40px', fontWeight: 'bold', fontSize: '1.8rem', color: '#3f51b5' }}>
+                Yeni Kitap Oluştur
             </Typography>
 
-            <form noValidate autoComplete="off" style={{ marginTop: '20px' }}>
-                <TextField
-                    label="Title"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    value={newBook.title}
-                    onChange={(e) => setNewBook({ ...newBook, title: e.target.value })}
-                />
+            <Grid container spacing={2} style={{ marginTop: '20px' }}>
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        label="Başlık"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        value={newBook.title}
+                        onChange={(e) => setNewBook({ ...newBook, title: e.target.value })}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        label="ISBN"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        value={newBook.isbn}
+                        onChange={(e) => setNewBook({ ...newBook, isbn: e.target.value })}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        label="Yayın Yılı"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        type="number"
+                        value={newBook.publicationYear}
+                        onChange={(e) => setNewBook({ ...newBook, publicationYear: e.target.value })}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        label="Yazar ID"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        value={newBook.author}
+                        onChange={(e) => setNewBook({ ...newBook, author: e.target.value })}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        label="Kategori ID"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        value={newBook.category}
+                        onChange={(e) => setNewBook({ ...newBook, category: e.target.value })}
+                    />
+                </Grid>
+            </Grid>
 
-                <TextField
-                    label="ISBN"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    value={newBook.isbn}
-                    onChange={(e) => setNewBook({ ...newBook, isbn: e.target.value })}
-                />
-
-                <TextField
-                    label="Publication Year"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    type="number"
-                    value={newBook.publicationYear}
-                    onChange={(e) => setNewBook({ ...newBook, publicationYear: e.target.value })}
-                />
-
-                <TextField
-                    label="Author ID"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    value={newBook.author}
-                    onChange={(e) => setNewBook({ ...newBook, author: e.target.value })}
-                />
-
-                <TextField
-                    label="Category ID"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    value={newBook.category}
-                    onChange={(e) => setNewBook({ ...newBook, category: e.target.value })}
-                />
-
-                <Button
-                    variant="contained"
-                    color="primary"
-                    style={{ marginTop: '20px' }}
-                    onClick={createBook}
-                >
-                    Create Book
-                </Button>
-            </form>
+            <Button
+                variant="contained"
+                color="primary"
+                startIcon={<AddIcon />}
+                style={{ marginTop: '20px', padding: '10px 20px', fontSize: '1rem', fontWeight: 'bold' }}
+                onClick={createBook}
+            >
+                Kitap Oluştur
+            </Button>
         </div>
     );
 }

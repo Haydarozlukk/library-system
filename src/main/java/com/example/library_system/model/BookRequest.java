@@ -1,4 +1,4 @@
-package com.example.library.model;
+package com.example.library_system.model;
 
 import com.example.library_system.model.Book;
 import com.example.library_system.model.Customer;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor // Parametresiz constructor oluşturur
+@NoArgsConstructor 
 public class BookRequest {
 
     @Id

@@ -1,6 +1,6 @@
-package com.example.library.repository;
+package com.example.library_system.repository;
 
-import com.example.library.model.BookRequest;
+import com.example.library_system.model.BookRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 

@@ -1,11 +1,10 @@
-package com.example.library.service.impl;
+package com.example.library_system.service.impl;
 
-import com.example.library.model.BookRequest;
-import com.example.library.repository.BookRequestRepository;
-import com.example.library.service.BookRequestService;
+import com.example.library_system.model.BookRequest;
+import com.example.library_system.repository.BookRequestRepository;
+import com.example.library_system.service.BookRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 

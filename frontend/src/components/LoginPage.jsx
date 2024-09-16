@@ -38,7 +38,7 @@ const LoginPage = () => {
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
-                width: '100vw',
+                width: '100%',
             }}
         >
             <Box
@@ -110,7 +110,7 @@ const LoginPage = () => {
 
                 <Box mt={2}>
                     <Link href="#" variant="body2" style={{ color: '#b3b3b3' }} onClick={() => navigate('/create-user')}>
-                        Netflix'e katılmak ister misiniz? <span style={{ color: 'white' }}>Şimdi kaydolun.</span>
+                       Bize Katılın <span style={{ color: 'white' }}>Şimdi kaydolun.</span>
                     </Link>
                 </Box>
             </Box>

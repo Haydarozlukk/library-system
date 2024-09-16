@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Button, Drawer, List, ListItem, ListItemIcon, ListItemText, CssBaseline, Container, Box } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Drawer, List, ListItem, ListItemIcon, ListItemText, CssBaseline, Container } from '@mui/material';
 import CategoryIcon from '@mui/icons-material/Category';
 import BookIcon from '@mui/icons-material/Book';
 import UserIcon from '@mui/icons-material/Person';
@@ -10,7 +10,10 @@ import BookList from './components/BookList';
 import CategoryList from './components/CategoryList';
 import HomePage from './components/HomePage';
 import CustomerBookRequestForm from './components/CustomerBookRequestForm';
-import LoginPage from './components/LoginPage'; // Login sayfasını ekliyoruz
+import LoginPage from './components/LoginPage';
+import UserCreateForm from './components/UserCreateForm'; // Kayıt ol sayfasını ekledim
+import PasswordResetRequestForm from './components/PasswordResetRequestForm'; // Parola sıfırlama talep formu
+import PasswordResetForm from './components/PasswordResetForm'; // Parola sıfırlama formu
 
 const drawerWidth = 280;
 
@@ -86,11 +89,16 @@ function App() {
                     <Container>
                         <Routes>
                             <Route path="/login" element={<LoginPage />} />
+                            <Route path="/create-user" element={<UserCreateForm />} /> {/* Kayıt ol rotası */}
                             <Route path="/" element={<HomePage />} />
                             <Route path="/authors" element={<AuthorList />} />
                             <Route path="/books" element={<BookList />} />
                             <Route path="/categories" element={<CategoryList />} />
                             <Route path="/request-book" element={<CustomerBookRequestForm />} />
+
+                            {/* Parola sıfırlama rotaları */}
+                            <Route path="/password-reset-request" element={<PasswordResetRequestForm />} /> {/* Parola sıfırlama isteği rotası */}
+                            <Route path="/reset-password" element={<PasswordResetForm />} /> {/* Parola sıfırlama formu rotası */}
                         </Routes>
                     </Container>
                 </main>

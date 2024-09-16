@@ -22,6 +22,7 @@ public class CategoryController {
         return categoryService.getAllCategories();
     }
 
+
     @GetMapping("/{id}/books")
     public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
         Category category = categoryService.getCategoryById(id);

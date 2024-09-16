@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -27,18 +26,31 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer updateCustomer(Long id, Customer customerDetails) {
-        Optional<Customer> optionalCustomer = customerRepository.findById(id);
-        if (optionalCustomer.isPresent()) {
-            Customer customer = optionalCustomer.get();
-            customer.setName(customerDetails.getName());
-            return customerRepository.save(customer);
-        }
-        return null;
+        Customer customer = customerRepository.findById(id).orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
+
+        customer.setName(customerDetails.getName());
+        customer.setEmail(customerDetails.getEmail());
+        // Diğer alanları da burada güncelleyebilirsiniz
+
+        return customerRepository.save(customer);
     }
 
     @Override
     public String deleteCustomer(Long id) {
         customerRepository.deleteById(id);
-        return "Customer deleted successfully";
+        return "Müşteri başarıyla silindi!";
+    }
+
+    // Şifre sıfırlama işlemi için yeni metotlar:
+
+    @Override
+    public Customer findByEmail(String email) {
+        return customerRepository.findByEmail(email);
+    }
+
+    @Override
+    public void savePasswordResetToken(Customer customer, String token) {
+        // Burada token'ı veritabanına kaydedebilir veya basit bir şekilde loglayabilirsiniz
+        System.out.println("Token " + token + " kullanıcı için kaydedildi: " + customer.getEmail());
     }
 }

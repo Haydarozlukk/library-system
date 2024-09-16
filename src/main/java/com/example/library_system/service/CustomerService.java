@@ -12,4 +12,9 @@ public interface CustomerService {
     Customer updateCustomer(Long id, Customer customerDetails);
 
     String deleteCustomer(Long id);
+
+    // Şifre sıfırlama işlemi için yeni metotlar:
+    Customer findByEmail(String email);
+
+    void savePasswordResetToken(Customer customer, String token);
 }

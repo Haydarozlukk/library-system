@@ -22,14 +22,13 @@ public class CategoryController {
         return categoryService.getAllCategories();
     }
 
-
     @GetMapping("/{id}/books")
-    public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
-        Category category = categoryService.getCategoryById(id);
-        if (category != null) {
-            return ResponseEntity.ok(category);
+    public ResponseEntity<List<Book>> getBooksByCategoryId(@PathVariable Long id) {
+        List<Book> books = categoryService.getBooksByCategoryId(id);
+        if (books != null && !books.isEmpty()) {
+            return ResponseEntity.ok(books);
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.noContent().build();
         }
     }
 

@@ -34,9 +34,11 @@ function CategoryList() {
         try {
             const response = await axios.get(`http://localhost:8081/api/categories/${categoryId}/books`);
             setSelectedCategoryBooks(response.data);
+            console.log("Fetched books: ", response.data); // Kitapları kontrol etmek için log ekliyoruz
         } catch (error) {
             setError("Kitaplar getirilirken bir hata oluştu.");
             console.error("Kitaplar getirilirken hata oluştu", error);
+            setSelectedCategoryBooks([]); // Hata durumunda boş bir liste atıyoruz
         } finally {
             setLoading(false);
         }

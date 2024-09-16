@@ -10,12 +10,11 @@ public interface CategoryService {
 
     Category getCategoryById(Long id);
 
+    List<Book> getBooksByCategoryId(Long categoryId);
+
     Category createCategory(Category category);
 
     Category updateCategory(Long id, Category category);
 
     void deleteCategory(Long id);
-
-    List<Book> getBooksByCategory(Long categoryId);
-
 }

@@ -48,4 +48,9 @@ public class BookRequestServiceImpl implements BookRequestService {
                 .filter(request -> "Approved".equals(request.getStatus()))
                 .toList();
     }
+
+    @Override
+    public List<BookRequest> getRequestsByCustomerId(Long customerId) {
+        return bookRequestRepository.findByCustomerId(customerId);
+    }
 }

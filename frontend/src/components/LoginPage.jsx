@@ -1,119 +1,89 @@
 import React, { useState } from 'react';
-import { Button, TextField, Typography, Link, Box, Checkbox, FormControlLabel } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import backgroundImage from '../assets/login.jpg'; // Ortak arka plan resmi
+import { Button, TextField, Typography, Link, Box, Paper, Alert } from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
+import axiosClient from '../api/axiosClient';
+import { useAuth } from '../context/AuthContext';
 
 const LoginPage = () => {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [rememberMe, setRememberMe] = useState(false);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+    const { login } = useAuth();
 
     const handleLogin = async () => {
-        const response = await fetch('/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ username, password }),
-        });
-
-        if (response.ok) {
-            alert('Giriş başarılı!');
-            navigate('/'); // Ana sayfaya yönlendir
-        } else {
-            alert('Giriş başarısız!');
+        setError(null);
+        if (!email || !password) {
+            setError('E-posta ve şifre zorunludur.');
+            return;
+        }
+        setLoading(true);
+        try {
+            const response = await axiosClient.post('/api/auth/login', { email, password });
+            login(response.data);
+            const redirectTo = location.state?.from || '/';
+            navigate(redirectTo);
+        } catch (err) {
+            setError(err.response?.data || 'Giriş başarısız. Bilgilerinizi kontrol edin.');
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                minHeight: '100vh',
-                backgroundImage: `url(${backgroundImage})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-                width: '100%',
-            }}
-        >
-            <Box
-                sx={{
-                    width: '100%',
-                    maxWidth: 400,
-                    padding: 4,
-                    backgroundColor: 'rgba(0,0,0,0.85)', // Daha belirgin siyah arka plan
-                    borderRadius: 2,
-                    boxShadow: 3,
-                    textAlign: 'center',
-                    color: 'white',
-                }}
-            >
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '70vh' }}>
+            <Paper sx={{ width: '100%', maxWidth: 420, p: 4 }}>
                 <Typography variant="h4" gutterBottom>
-                    Oturum Aç
+                    Giriş Yap
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                    Kitap ödünç alabilmek için giriş yapmalısınız.
                 </Typography>
 
+                {error && (
+                    <Alert severity="error" sx={{ mb: 2 }}>
+                        {typeof error === 'string' ? error : 'Giriş başarısız.'}
+                    </Alert>
+                )}
+
                 <TextField
-                    label="E-posta veya telefon numarası"
+                    label="E-posta"
                     fullWidth
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    style={{ marginBottom: '20px', backgroundColor: '#333', color: 'white' }} // Daha koyu arka plan
-                    InputProps={{ style: { color: 'white' } }}
-                    InputLabelProps={{ style: { color: 'white' } }}
+                    sx={{ mb: 2 }}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                 />
                 <TextField
-                    label="Parola"
+                    label="Şifre"
                     type="password"
                     fullWidth
+                    sx={{ mb: 3 }}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    style={{ marginBottom: '20px', backgroundColor: '#333', color: 'white' }} // Daha koyu arka plan
-                    InputProps={{ style: { color: 'white' } }}
-                    InputLabelProps={{ style: { color: 'white' } }}
+                    onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
                 />
 
-                <Button
-                    variant="contained"
-                    fullWidth
-                    style={{
-                        backgroundColor: '#e50914',
-                        color: 'white',
-                        marginBottom: '20px',
-                    }}
-                    onClick={handleLogin}
-                >
-                    Oturum Aç
+                <Button variant="contained" fullWidth size="large" onClick={handleLogin} disabled={loading}>
+                    {loading ? 'Giriş yapılıyor...' : 'Giriş Yap'}
                 </Button>
 
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={rememberMe}
-                            onChange={(e) => setRememberMe(e.target.checked)}
-                            style={{ color: 'white' }}
-                        />
-                    }
-                    label="Beni hatırla"
-                    style={{ color: 'white' }}
-                />
-
-                <Box mt={2}>
-                    <Link href="#" variant="body2" style={{ color: '#b3b3b3' }}>
+                <Box mt={2} textAlign="center">
+                    <Link href="/password-reset-request" underline="hover">
                         Parolayı mı unuttunuz?
                     </Link>
                 </Box>
 
-                <Box mt={2}>
-                    <Link href="#" variant="body2" style={{ color: '#b3b3b3' }} onClick={() => navigate('/create-user')}>
-                       Bize Katılın <span style={{ color: 'white' }}>Şimdi kaydolun.</span>
+                <Box mt={1} textAlign="center">
+                    <Typography variant="body2" color="text.secondary" component="span">
+                        Hesabın yok mu?{' '}
+                    </Typography>
+                    <Link href="/create-user" underline="hover">
+                        Şimdi kaydol
                     </Link>
                 </Box>
-            </Box>
+            </Paper>
         </Box>
     );
 };

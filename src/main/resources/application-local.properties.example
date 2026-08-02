@@ -1,0 +1,22 @@
+# Bu dosyayi "application-local.properties" olarak kopyala (ayni klasore) ve
+# gercek yerel degerlerini gir. application-local.properties .gitignore'da
+# oldugu icin repoya commit edilmez.
+#
+# Kullanim: uygulamayi calistirirken SPRING_PROFILES_ACTIVE=local (veya
+# --spring.profiles.active=local) ile ac, boylece bu dosya application.properties
+# uzerine yazar ve ayrica ortam degiskeni export etmene gerek kalmaz.
+
+DB_URL=jdbc:postgresql://localhost:5432/library
+DB_USERNAME=postgres
+DB_PASSWORD=change-me
+
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+MAIL_FROM=your-email@gmail.com
+
+# En az 32 karakter uzunlugunda, rastgele bir deger kullan (HMAC-SHA anahtari).
+JWT_SECRET=change-me-to-a-long-random-string-min-32-chars
+
+# Ilk admin hesabi bu degerlerle otomatik olusturulur (admin tablosu bosken).
+INITIAL_ADMIN_EMAIL=admin@example.com
+INITIAL_ADMIN_PASSWORD=change-me

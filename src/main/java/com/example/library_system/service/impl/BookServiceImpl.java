@@ -6,6 +6,8 @@ import com.example.library_system.repository.AuthorRepository;
 import com.example.library_system.repository.CategoryRepository;
 import com.example.library_system.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +28,12 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
+    }
+
+    @Override
+    public Page<Book> searchBooks(String search, Long categoryId, Long authorId, Pageable pageable) {
+        String normalized = (search == null || search.isBlank()) ? null : search.trim();
+        return bookRepository.search(normalized, categoryId, authorId, pageable);
     }
 
     @Override
@@ -51,6 +59,12 @@ public class BookServiceImpl implements BookService {
 
         book.setTitle(bookDetails.getTitle());
         book.setIsbn(bookDetails.getIsbn());
+        book.setPublicationYear(bookDetails.getPublicationYear());
+        book.setImageUrl(bookDetails.getImageUrl());
+        book.setDescription(bookDetails.getDescription());
+        book.setPageCount(bookDetails.getPageCount());
+        book.setLanguage(bookDetails.getLanguage());
+        book.setPublisher(bookDetails.getPublisher());
         book.setAuthor(authorRepository.findById(bookDetails.getAuthor().getId())
                 .orElseThrow(() -> new RuntimeException("Author not found")));
         book.setCategory(categoryRepository.findById(bookDetails.getCategory().getId())

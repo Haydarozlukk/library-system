@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@CrossOrigin(origins = "http://localhost:5174")
 @RestController
 @RequestMapping("/api/customer")
 public class CustomerController {

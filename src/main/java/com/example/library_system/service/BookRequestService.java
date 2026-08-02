@@ -15,4 +15,6 @@ public interface BookRequestService {
     BookRequest rejectRequest(Long requestId);
 
     List<BookRequest> getCustomerApprovedBooks(Long customerId);
+
+    List<BookRequest> getRequestsByCustomerId(Long customerId);
 }

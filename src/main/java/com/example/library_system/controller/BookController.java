@@ -4,12 +4,14 @@ import com.example.library_system.model.Book;
 import com.example.library_system.repository.BookRepository;
 import com.example.library_system.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:5174")
 @RestController
 @RequestMapping("/api/books")
 public class BookController {
@@ -23,6 +25,17 @@ public class BookController {
     @GetMapping("/all")
     public List<Book> getAllBooks() {
         return bookService.getAllBooks();
+    }
+
+    @GetMapping
+    public Page<Book> searchBooks(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Long authorId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "24") int size) {
+        return bookService.searchBooks(search, categoryId, authorId,
+                PageRequest.of(page, size, Sort.by("title")));
     }
 
     @GetMapping("/{id}")

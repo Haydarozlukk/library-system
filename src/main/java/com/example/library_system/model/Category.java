@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Set;
 
 @Entity
 @Data
@@ -15,7 +14,4 @@ public class Category implements Serializable {
     private Long id;
 
     private String name;
-
-    @OneToMany(mappedBy = "category")
-    private Set<Book> books;
 }

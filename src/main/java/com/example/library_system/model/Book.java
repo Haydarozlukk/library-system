@@ -21,6 +21,13 @@ public class Book implements Serializable {
     private int publicationYear;
     private String imageUrl;
 
+    @Column(length = 2000)
+    private String description;
+
+    private Integer pageCount;
+    private String language;
+    private String publisher;
+
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")

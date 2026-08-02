@@ -49,6 +49,8 @@ public class AuthorServiceImpl implements AuthorService {
             author.setName(authorDetails.getName());
             author.setAge(authorDetails.getAge());
             author.setMemleket(authorDetails.getMemleket());
+            author.setImageUrl(authorDetails.getImageUrl());
+            author.setBiography(authorDetails.getBiography());
             return authorRepository.save(author);
         }
         return null; // Ya da uygun bir hata fırlatılabilir
